@@ -23,16 +23,21 @@ export async function connectToMongoDB() {
   }
 }
 
-connectToMongoDB();
+const monggoClient =await connectToMongoDB();
+const db = monggoClient.db("product-db");
+const productCollection = db.collection("product")
 
 // parse requests with a Content-Type of application/json
 app.use(express.json())
 
 //post 
-app.post('/products',(req, res) => {
+app.post('/products',async(req, res) => {
     const data = req.body;
-   console.log(data);
-   res.send({mes: "Api is working"})
+    
+   const result =await productCollection.insertOne(data);
+//    console.log(result);
+    
+   res.send(result)
 })
 
 
