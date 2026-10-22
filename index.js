@@ -1,5 +1,5 @@
 import express from "express";
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import 'dotenv/config'
 import cors from "cors"
 
@@ -40,13 +40,41 @@ app.post('/products',async(req, res) => {
    res.send(result)
 })
 
-
+ // Get all products from the database
+app.get('/products', async(req, res) =>{
+   const result = await  productCollection.find().toArray();
+   res.send(result)
+})
 
 app.get("/", (req,res) => {
     res.send({
         mes: "Server is runnig"
     })
 })
+
+
+// sigle product get by id
+app.get('/products/:id', async(req, res) => {
+    const {id} = req.params;
+    const result = await productCollection.findOne({_id: new ObjectId(id)})
+    res.send(result)
+})
+
+
+
+//update data
+
+app.patch("/products/:id", async(req, res) =>{
+
+  const data = req.body;
+  const {id} = req.params;
+   const result = productCollection.updateOne(
+    {_id: new ObjectId(id)},
+    {$set: data}
+   )
+    res.send(result)
+})
+
 
 
 
